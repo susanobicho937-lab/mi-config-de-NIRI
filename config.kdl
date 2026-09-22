@@ -1,3 +1,38 @@
+environment {
+    MESA_GL_VERSION_OVERRIDE "4.6"
+}
+// Blur para los paneles/barra/dock/notificaciones de noctalia
+layer-rule {
+    match namespace="^noctalia-(bar-[^\"]+|notification|dock|panel|attached-panel|osd)$"
+    background-effect {
+        xray true
+    }
+}
+
+// Blur en el selector de ventanas de noctalia
+layer-rule {
+    match namespace="noctalia-window-switcher"
+    background-effect {
+        blur true
+        xray true
+    }
+}
+
+
+window-rule {
+    background-effect {
+        blur true
+        xray false
+    }
+}
+
+
+blur {
+    passes 2
+    offset 3.0
+    noise 0.03
+    saturation 1.0
+}
 layer-rule {
     match namespace="^noctalia-wallpaper"
     place-within-backdrop true
@@ -265,8 +300,7 @@ layout {
 // See the binds section below for more spawn examples.
 
 // This line starts waybar, a commonly used bar for Wayland compositors.
-spawn-at-startup "noctalia-shell"
-spawn-at-startup "hyprpaper"
+spawn-at-startup "noctalia"
 
 // To run a shell command (with variables, pipes, etc.), use spawn-sh-at-startup:
 // spawn-sh-at-startup "qs -c ~/source/qs/MyAwesomeShell"
@@ -362,7 +396,7 @@ binds {
     // Suggested binds for running programs: terminal, app launcher, screen locker.
     Mod+T { spawn "ghostty"; }
     Mod+Return hotkey-overlay-title="esto abre gosti" { spawn "foot"; }
-    Mod+D hotkey-overlay-title="Run an Application: noctalia-launcher" { spawn-sh "noctalia-shell ipc call launcher toggle"; }
+    Mod+D hotkey-overlay-title="Run an Application: noctalia-launcher" { spawn "noctalia" "msg" "panel-toggle" "launcher"; }
     Super+Alt+L hotkey-overlay-title="Lock the Screen: swaylock" { spawn "swaylock"; }
 
     // Use spawn-sh to run a shell command. Do this if you need pipes, multiple commands, etc.
@@ -406,7 +440,7 @@ binds {
     Mod+H     { focus-column-left; }
     Mod+J     { focus-window-down; }
     Mod+K     { focus-window-up; }
-    Mod+L     { spawn-sh " noctalia-shell ipc call lockScreen lock"; }
+    Mod+L     { spawn "noctalia" "msg" "session" "lock"; }
 
     Mod+Ctrl+Left  { move-column-left; }
     Mod+Ctrl+Down  { move-window-down; }
@@ -624,7 +658,7 @@ binds {
     // The quit action will show a confirmation dialog to avoid accidental exits.
     Mod+Shift+E { quit; }
     Ctrl+Alt+Delete { quit; }
-
+    Mod+E { spawn "thunar"; }
     // Powers off the monitors. To turn them back on, do any input like
     // moving the mouse or pressing any other key.
     Mod+Shift+P { power-off-monitors; }
@@ -640,3 +674,5 @@ cursor {
     xcursor-theme "Bibata-Modern-Classic"
     xcursor-size 20
 }
+
+include "noctalia.kdl"
